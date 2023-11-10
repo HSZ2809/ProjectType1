@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Manager_General
   - Manager_Scene
+  - Manager_Sound
+  - Manager_Stage
+  - Monster
   layers:
   - Default
   - TransparentFX

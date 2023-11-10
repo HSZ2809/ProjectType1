@@ -1,21 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private Collider2D playerCollider = null;
     [SerializeField] private GameObject shootDirection = null;
     [SerializeField] private Transform muzzle = null;
-    [SerializeField] private GameObject bullet = null;
-    [SerializeField] private float moveSpeed = 1f;
-    [SerializeField] private float attackSpeed = 3f;
-    [SerializeField] private bool permitToFire = true;
+
+    [Header("Status")]
+    [SerializeField] private float hp = 0.0f;
+    [SerializeField] private float moveSpeed = 0.0f;
+    [SerializeField] private float attackSpeed = 0.0f;
 
     private void Start()
     {
-        if(permitToFire)
-            InvokeRepeating("Shoot", attackSpeed, 1);
+
     }
 
     private void Update() 
@@ -33,30 +34,15 @@ public class Player : MonoBehaviour
             float angle = Mathf.Atan2(v, h) * Mathf.Rad2Deg;
             shootDirection.transform.rotation = Quaternion.Euler(0, 0, angle - 90);
         }
-        
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            if(!permitToFire)
-            {
-                permitToFire = true;
-                InvokeRepeating("Shoot", attackSpeed, 1);
-            }
-            else
-            {
-                permitToFire = false;
-                CancelInvoke("Shoot");
-            }
-
-        }
     }
 
     private void OnCollisionStay2D(Collision2D other) 
     {
-        Debug.Log("hit!");
-    }
-
-    private void Shoot()
-    {
-        Instantiate(bullet, muzzle.position, muzzle.rotation);
+        if(other.gameObject.tag == "Monster")
+        {
+            float damage = other.gameObject.GetComponent<Monster>().AttackPower;
+            hp -= damage;
+            Debug.Log("Player : hit! - damage : " + damage);
+        }
     }
 }
