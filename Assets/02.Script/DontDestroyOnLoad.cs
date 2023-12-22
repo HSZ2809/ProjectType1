@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class DontDestroyOnLoad : MonoBehaviour
+namespace ZUN
 {
-    private void Start()
+    public class DontDestroyOnLoad : MonoBehaviour
     {
-        DontDestroyOnLoad(this.GameObject());
+        private void Start()
+        {
+            DontDestroyOnLoad(this.GameObject());
+        }
     }
 }

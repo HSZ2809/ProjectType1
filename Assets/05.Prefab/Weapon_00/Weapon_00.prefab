@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 53094234959727826}
   - component: {fileID: 53094234959727827}
   m_Layer: 0
-  m_Name: Weapon
+  m_Name: Weapon_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,8 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4541a7e91bc96de4aa86ede3dae91e4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  character: {fileID: 0}
   muzzle: {fileID: 0}
-  bullet: {fileID: 3571238517067622289, guid: 20c6416147abb5f4cab63d66dd70a922, type: 3}
-  attackPower: 1
-  reloadTime: 2
+  bullet: {fileID: 3571238517067622254, guid: 20c6416147abb5f4cab63d66dd70a922, type: 3}
+  defaultDamage: 10
+  reloadTime: 1
+  magazine: []
