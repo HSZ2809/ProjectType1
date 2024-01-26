@@ -1,13 +1,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace ZUN
 {
     public class Monster : MonoBehaviour
     {
+        [Header("EXP Prefab")]
+        [SerializeField] private DropedEXP dropedEXP;
+
+        [Header("Status")]
         [SerializeField] private float hp = 0.0f;
         [SerializeField] private float attackPower = 0.0f;
+        [SerializeField] private float moveSpeed = 0.0f;
+
+        [Header("Character Transform")]
+        [SerializeField] private Transform character = null;
+
+        private void Awake()
+        {
+            character = GameObject.FindGameObjectWithTag("Character").GetComponent<Transform>();
+        }
+
+        private void Update()
+        {
+            Vector3 moveDirection = (character.position - transform.position).normalized;
+            moveDirection *= moveSpeed;
+
+            transform.Translate(moveDirection * Time.deltaTime);
+        }
 
         public float Hp
         {
@@ -27,6 +49,7 @@ namespace ZUN
 
             if(hp < 0)
             {
+                Instantiate(dropedEXP, transform.position, transform.rotation);
                 gameObject.SetActive(false);
                 Debug.Log("Monster : Died");
             }

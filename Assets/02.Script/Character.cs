@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +14,8 @@ namespace ZUN
         [SerializeField] private Collider2D playerCollider = null;
         [SerializeField] private GameObject shootDirection = null;
         [SerializeField] private Transform muzzle = null;
-        [SerializeField] private IWeapon[] weapon = new IWeapon[5];
+        [SerializeField] private WeaponItem[] weaponItems = new WeaponItem[6];
+        [SerializeField] private PassiveItem[] passiveItems = new PassiveItem[6];
 
         [Header("Connected Joystick")]
         [SerializeField] private Joystick joystick;
@@ -25,28 +27,20 @@ namespace ZUN
         [SerializeField] private float attackPower = 0.0f;
         [SerializeField] private float attackSpeed = 0.0f;
         [SerializeField] private int exp = 0;
+        [SerializeField] private string initialWeaponSN = "default";
 
-        private int amountOfWeaponItem = 1;
-        private int amountOfPassiveItem = 0;
+        [SerializeField] private int amountOfWeaponItem = 0;
+        [SerializeField] private int amountOfPassiveItem = 0;
 
         public float AttackPower { get{ return attackPower; } }
-        public bool FullArmed 
-        {
-            get{ return (weapon[weapon.Length - 1] != null) ? true : false; }
-        }
+        public string InitialWeaponSN { get{ return initialWeaponSN; } }
 
         private void Update() 
         {
-            // float h = Input.GetAxis("Horizontal");
-            // float v = Input.GetAxis("Vertical");
-
             float h = joystick.GetHorizontalAxis();
             float v = joystick.GetVerticalAxis();
 
-            Vector3 movePosition = new Vector3( h, v, 0 ).normalized;
-
-            //Vector3 moveDirection = new Vector3(h, v, 0);
-            Vector3 moveDirection = movePosition;
+            Vector3 moveDirection = new Vector3( h, v, 0 ).normalized;
             moveDirection *= moveSpeed;
 
             transform.Translate(moveDirection * Time.deltaTime);
@@ -72,37 +66,64 @@ namespace ZUN
         {
             if(other.CompareTag("Exp"))
             {
-                AddExp(other.GetComponent<dropedEXP>().Exp);
+                AddExp(other.GetComponent<DropedEXP>().Exp);
                 Destroy(other.gameObject);
             }
         }
 
-        public void RegistrationWeapon(IWeapon newWeapon)
+        public void RegistrationWeapon(WeaponItem newWeapon)
         {
-            for(int i = 0; i < weapon.Length; i++)
+            if(amountOfWeaponItem < weaponItems.Length)
             {
-                if(weapon[i] == null)
-                {
-                    weapon[i] = newWeapon;
-                    weapon[i].ShootWeapon(attackSpeed);
-                    return;
-                }
+                weaponItems[amountOfWeaponItem] = newWeapon;
+                weaponItems[amountOfWeaponItem].ActivateWeapon(attackSpeed);
+                amountOfWeaponItem += 1;
+                return;
             }
+            else
+                Debug.Log("Weapon Overflow!");
+        }
 
-            Debug.Log("Weapon Overflow!");
+        public void RegistrationPassive(PassiveItem newPassive)
+        {
+            if(amountOfPassiveItem < passiveItems.Length)
+            {
+                passiveItems[amountOfPassiveItem] = newPassive;
+                amountOfPassiveItem += 1;
+                return;
+            }
+            else
+                Debug.Log("Passive Overflow!");
         }
 
         public void AddExp(int _exp)
         {
             exp += _exp;
 
-            if(exp > 10)
+            if(exp >= 10)
             {
                 exp -= 10;
                 level += 1;
 
-                staff_Play.ShowOptions(amountOfWeaponItem, amountOfPassiveItem);
+                staff_Play.ShowOptions(amountOfWeaponItem, GetWISNs(), amountOfPassiveItem);
             }
+        }
+
+        private string[] GetWISNs()
+        {
+            string[] SNs = new string[6];
+
+            for(int i = 0; i < 6; i++)
+            {
+                if(weaponItems[i] == null)
+                    break;
+                else
+                {
+                    SNs[i] = weaponItems[i].SerialNumber;
+                }
+            }
+
+            return SNs;
         }
     }
 }
